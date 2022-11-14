@@ -1,5 +1,8 @@
 #! /bin/bash
+# !!!some function calls are right below their respective bodies
 PSQL="psql -X --username=freecodecamp --dbname=salon --tuples-only -c"
+
+
 echo -e "\n~~~~ MY SALON ~~~~\n"
 
 MAIN_MENU(){
@@ -13,20 +16,20 @@ MAIN_MENU(){
   do
     echo "$SERVICE_ID) $SERVICE_NAME"
   done
-  #enter service id
+  # enter service id
   echo "Please enter the id of the desired service (enter 0 to Exit):"
   read SERVICE_ID_SELECTED
   SERVICE_AVAILABILITY=$($PSQL "SELECT name FROM services WHERE service_id=$SERVICE_ID_SELECTED")
   if [[ $SERVICE_ID_SELECTED == 0 ]]
   then
-    # if service if is 0 exit
+    # if service is 0 exit
     exit
   else
     # else check if service exists
     if [[ -z $SERVICE_AVAILABILITY ]]
     then
-      # if yes recall main menu
-      MAIN_MENU "The selected service does not exist, select again:"
+      # if not recall main menu
+      MAIN_MENU "The selected service does not exist, select again:"      #<-----------function call
     else
       # else
       echo "What's your phone number?"
@@ -38,9 +41,9 @@ MAIN_MENU(){
         # check if phone is null
         if [[ -z $CUSTOMER_PHONE ]]
         then
-          # if yes recall customer phone
+          # if yes recall customer phone function
           echo "You didn't enter a phone number, try again:"
-          INSERT_CUSTOMER_PHONE
+          INSERT_CUSTOMER_PHONE         #<---------------function call
         else
           # else check if phone exists in db
           PHONE_EXIST=$($PSQL "SELECT name FROM customers WHERE phone='$CUSTOMER_PHONE'")
@@ -48,6 +51,7 @@ MAIN_MENU(){
           then
             # if not insert name
             echo "There are no records for your phone number, what's your name?"
+          
 
 
 
@@ -58,13 +62,13 @@ MAIN_MENU(){
               then
                 # if null recall insert customer name
                 echo "You didn't enter your name, try again:"
-                INSERT_CUSTOMER_NAME
+                INSERT_CUSTOMER_NAME        #<-------------function call
               else
                 # else insert customer into the db
                 REGISTER_CUSTOMER=$($PSQL "INSERT INTO customers(phone, name) VALUES('$CUSTOMER_PHONE', '$CUSTOMER_NAME')")
               fi
             }
-            INSERT_CUSTOMER_NAME
+            INSERT_CUSTOMER_NAME    #<----------function call
           else
             # if yes fetch name from earlier query
             CUSTOMER_NAME=$PHONE_EXIST
@@ -83,7 +87,7 @@ MAIN_MENU(){
             then
               # if yes recall insert service time
               echo "You didn't enter an appointment time, try again:"
-              INSERT_SERVICE_TIME
+              INSERT_SERVICE_TIME     #<--------------function call
             else
               # fetch customer id and insert customer into appointments
               CUSTOMER_ID=$($PSQL "SELECT customer_id FROM customers WHERE phone='$CUSTOMER_PHONE'")
@@ -92,13 +96,13 @@ MAIN_MENU(){
               echo -e "I have put you down for a $SERVICE_NAME at $SERVICE_TIME, $CUSTOMER_NAME."
             fi
           }
-          INSERT_SERVICE_TIME
+          INSERT_SERVICE_TIME   #<-------------function call
         fi
       }
-      INSERT_CUSTOMER_PHONE
+      INSERT_CUSTOMER_PHONE     #<-------------function call
     fi
   fi
 }
 
 
-MAIN_MENU
+MAIN_MENU         #<--------------function call
